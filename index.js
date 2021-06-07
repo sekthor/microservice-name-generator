@@ -9,7 +9,7 @@ var adjectives = require("./data/adjectives.json");
 
 function saveListToFile(list, file) {
     list.sort();
-    fs.writeFile(file, JSON.stringify(list), "utf8", (err) => {
+    fs.writeFile(file, JSON.stringify(list, null, " "), "utf8", (err) => {
         if (err) {
             console.log("[!] error writing file");
         }
@@ -28,14 +28,27 @@ app.get("/name", (req, res) => {
 });
 
 app.post("/adjective", (req, res) => {
-    adjectives.push(req.body.adjective);
+
+    var adj = req.body.adjective
+    if (adjectives.indexOf(adj) !== -1) {
+        res.statusCode = 409;
+        res.send("Error: Already exists");
+        return;
+    }
+    adjectives.push(adj);
     saveListToFile(adjectives, "./data/adjectives.json");
     res.send(req.body);
 });
 
 app.post("/noun", (req, res) => {
-    adjectives.push(req.body.adjective);
-    saveListToFile(adjectives, "./data/nouns.json");
+    var noun = req.body.noun;
+    if (nouns.indexOf(noun) !== -1) {
+        res.statusCode = 409;
+        res.send("Error: Already exists");
+        return;
+    }
+    nouns.push(req.body.noun);
+    saveListToFile(nouns, "./data/nouns.json");
     res.send(req.body);
 })
 
